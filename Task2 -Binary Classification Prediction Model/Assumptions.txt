@@ -1,0 +1,12 @@
+1. I removed some rows that had alot of NAs to keep data clear and prediction accuracy high.Therefore some data should be ignored.
+
+2. I ignored the presence of variable19 because it did not contribute in the prediction
+
+3. I converted all characters with T&F to booleans
+
+4. I converted Coloumns with k-multiclass to k boolean coloumns
+
+5. I splitted coloumns with multiple values to indivisual coloumns
+
+6. I calculated average for coloumns to fill some NAs in the data
+
