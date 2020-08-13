@@ -1,14 +1,13 @@
 import matplotlib
 import pandas as pd
+import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
 
 
 df = pd.read_excel(r'training.xlsx')
-
-#print(df.isnull().sum())
-#print(df.shape)
+print("Null Data before preprocessing \n" + str(df.isnull().sum()))
 
 # Change ClassLabel to bool
 df.classLabel = df.classLabel.replace(['yes.'], 1)
@@ -17,11 +16,11 @@ df.classLabel = df.classLabel.replace(['no.'], 0)
 # Drop some NAs
 df = df.dropna(subset=['variable4', 'variable5', 'variable6', 'variable7'], how='any')
 
-# Drop var19
+# Drop var19 because it is not useful and a bit confusing data
 df = df.drop('variable19', axis=1)
 
 # Convert T&F to Binary
-BinaryCols = ['variable1', 'variable9', 'variable10', 'variable12','variable18']
+BinaryCols = ['variable1', 'variable9', 'variable10', 'variable12', 'variable18']
 for c in BinaryCols:
     df[c] = df[c].replace(['a', 't'], 1)
     df[c] = df[c].replace(['b', 'f'], 0)
@@ -60,24 +59,29 @@ for c in AvgCols:
     df[c] = df[c].fillna(avg)
 df = df.replace('(\w*)', 0, regex=True)
 
-# print(df.isnull().sum())
-# print(df)
-#plt.scatter(df.variable1, df.classLabel, marker='+', color='red')
+print("Null Data after preprocessing \n" + str(df.isnull().sum()))
+plt.scatter(df.variable1, df.classLabel, marker='+', color='red')
 
 ColNames = []
 classlabel = 0
-predictV18 = 0
 for c in df.columns:
     if(c == 'classLabel'):
         classlabel = df[c]
     else:
         ColNames.append(c)
 
-
-print(ColNames.sum())
 X_train, X_test, Y_train, Y_test = train_test_split(df[ColNames], classlabel, test_size=0.1)
 model = LogisticRegression()
 model.fit(X_train, Y_train)
 model.predict(X_test)
 print(model.score(X_test, Y_test))
 model.predict_proba(X_test)
+
+with open("trainingColNames.txt", "wb") as myFile:
+    pickle.dump(ColNames, myFile)
+
+myDictionary = {}
+
+with open('trainingColNames.txt', 'rb') as dict_items_open:
+    myDictionary = pickle.load(dict_items_open)
+
