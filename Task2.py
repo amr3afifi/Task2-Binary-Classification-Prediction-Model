@@ -73,7 +73,8 @@ for c in df.columns:
     else:
         ColNames.append(c)
 
-print(ColNames)
+
+print(ColNames.sum())
 X_train, X_test, Y_train, Y_test = train_test_split(df[ColNames], classlabel, test_size=0.1)
 model = LogisticRegression()
 model.fit(X_train, Y_train)
